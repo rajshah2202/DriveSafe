@@ -12,7 +12,6 @@ import cv2
 
 from blink_detection import detect_blink
 from yawn_detection import detect_yawn
-from attention_detection import detect_attention
 
 
 def sound_alarm(path):
