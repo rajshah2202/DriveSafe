@@ -12,6 +12,7 @@ import cv2
 
 from blink_detection import detect_blink
 from yawn_detection import detect_yawn
+from attention_detection import detect_attention
 
 
 def sound_alarm(path):
@@ -33,6 +34,7 @@ args = vars(ap.parse_args())
 # indicate if the alarm is going off
 BLINK_COUNTER = 0
 YAWN_COUNTER = 0
+ATTENTION_COUNTER = 0
 ALARM_ON = False
 
 # initialize dlib's face detector (HOG-based) and then create
@@ -95,6 +97,25 @@ while True:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         else:
             ALARM_ON = False
+        
+        attention, ATTENTION_COUNTER = detect_attention(leftEye, rightEye, mouth, ATTENTION_COUNTER)
+
+        if attention:
+            ALARM_ON = False
+        else:
+            if not ALARM_ON:
+                ALARM_ON = True
+                # check to see if an alarm file was supplied,
+                # and if so, start a thread to have the alarm
+                # sound played in the background
+                if args["alarm"] != "":
+                    t = Thread(target=sound_alarm,
+                               args=(args["alarm"],))
+                    t.deamon = True
+                    t.start()
+            # draw an alarm on the frame
+            cv2.putText(frame, "PAY ATTENTION!", (10, 30),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
         # draw the computed eye aspect ratio on the frame to help
         # with debugging and setting the correct eye aspect ratio
