@@ -18,24 +18,27 @@ video_capture = cv2.VideoCapture(0)
 abhay_image = face_recognition.load_image_file("./../data/abhay.jpeg")
 abhay_face_encoding = face_recognition.face_encodings(abhay_image)[0]
 
-# Load a second sample picture and learn how to recognize it.
 naveen_image = face_recognition.load_image_file("./../data/naveen.jpeg")
 naveen_face_encoding = face_recognition.face_encodings(naveen_image)[0]
 
-# Load a sample picture and learn how to recognize it.
 yash_image = face_recognition.load_image_file("./../data/yash.jpeg")
 yash_face_encoding = face_recognition.face_encodings(yash_image)[0]
+
+raj_image = face_recognition.load_image_file("./../data/raj.jpeg")
+raj_face_encoding = face_recognition.face_encodings(raj_image)[0]
 
 # Create arrays of known face encodings and their names
 known_face_encodings = [
     abhay_face_encoding,
     naveen_face_encoding,
-    yash_face_encoding
+    yash_face_encoding,
+    raj_face_encoding
 ]
 known_face_names = [
     "Abhay",
     "Naveen",
-    "Yash"
+    "Yash",
+    "Raj"
 ]
 
 # Initialize some variables
