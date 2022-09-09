@@ -23,7 +23,7 @@ def eye_aspect_ratio(eye):
     return ear
 
 
-def detect_blink(predictor, rect, gray, frame, lStart, lEnd, rStart, rEnd, BLINK_COUNTER):
+def detect_blink(predictor, rect, gray, lStart, lEnd, rStart, rEnd, BLINK_COUNTER):
     # determine the facial landmarks for the face region, then
     # convert the facial landmark (x, y)-coordinates to a NumPy
     # array

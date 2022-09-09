@@ -11,6 +11,7 @@ import dlib
 import cv2
 
 from blink_detection import detect_blink
+from yawn_detection import detect_yawn
 
 
 def sound_alarm(path):
@@ -31,6 +32,7 @@ args = vars(ap.parse_args())
 # initialize the frame counter as well as a boolean used to
 # indicate if the alarm is going off
 BLINK_COUNTER = 0
+YAWN_COUNTER = 0
 ALARM_ON = False
 
 # initialize dlib's face detector (HOG-based) and then create
@@ -43,6 +45,9 @@ predictor = dlib.shape_predictor(args["shape_predictor"])
 # right eye, respectively
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
+
+# grab the indexes of the facial landmarks for the mouth
+(mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["inner_mouth"]
 
 # start the video stream thread
 print("[INFO] starting video stream thread...")
@@ -61,15 +66,20 @@ while True:
     # loop over the face detections
     for rect in rects:
         blink, leftEye, rightEye, BLINK_COUNTER = detect_blink(
-            predictor, rect, gray, frame, lStart, lEnd, rStart, rEnd, BLINK_COUNTER)
-        print(blink)
+            predictor, rect, gray, lStart, lEnd, rStart, rEnd, BLINK_COUNTER)
         # compute the convex hull for the left and right eye, then
         # visualize each of the eyes
         leftEyeHull = cv2.convexHull(leftEye)
         rightEyeHull = cv2.convexHull(rightEye)
         cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)
         cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)
-        if blink:
+
+        yawn, mouth, YAWN_COUNTER = detect_yawn(predictor, rect, gray, mStart, mEnd, YAWN_COUNTER)
+        # compute the convex hull and visualize the mouth
+        mouthHull = cv2.convexHull(mouth)
+        cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
+
+        if blink or yawn:
             if not ALARM_ON:
                 ALARM_ON = True
                 # check to see if an alarm file was supplied,
