@@ -33,6 +33,7 @@ args = vars(ap.parse_args())
 # indicate if the alarm is going off
 BLINK_COUNTER = 0
 YAWN_COUNTER = 0
+ATTENTION_COUNTER = 0
 ALARM_ON = False
 
 # initialize dlib's face detector (HOG-based) and then create
@@ -63,6 +64,26 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # detect faces in the grayscale frame
     rects = detector(gray, 0)
+
+    empty_rect = dlib.rectangles()
+    if rects == empty_rect:
+        if not ALARM_ON:
+            ALARM_ON = True
+            # check to see if an alarm file was supplied,
+            # and if so, start a thread to have the alarm
+            # sound played in the background
+            if args["alarm"] != "":
+                t = Thread(target=sound_alarm,
+                           args=(args["alarm"],))
+                t.deamon = True
+                t.start()
+
+        # draw an alarm on the frame
+        cv2.putText(frame, "PAY ATTENTION!", (10, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+    else:
+        ALARM_ON = False
+
     # loop over the face detections
     for rect in rects:
         blink, leftEye, rightEye, BLINK_COUNTER = detect_blink(
@@ -74,7 +95,8 @@ while True:
         cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)
         cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)
 
-        yawn, mouth, YAWN_COUNTER = detect_yawn(predictor, rect, gray, mStart, mEnd, YAWN_COUNTER)
+        yawn, mouth, YAWN_COUNTER = detect_yawn(
+            predictor, rect, gray, mStart, mEnd, YAWN_COUNTER)
         # compute the convex hull and visualize the mouth
         mouthHull = cv2.convexHull(mouth)
         cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
@@ -95,12 +117,6 @@ while True:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         else:
             ALARM_ON = False
-
-        # draw the computed eye aspect ratio on the frame to help
-        # with debugging and setting the correct eye aspect ratio
-        # thresholds and frame counters
-        # cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),
-        #             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
     # show the frame
     cv2.imshow("Frame", frame)
