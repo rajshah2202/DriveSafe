@@ -21,9 +21,9 @@ def sound_alarm(path):
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-p", "--shape-predictor", type=str, default="./../data/shape_predictor_68_face_landmarks.dat",
+ap.add_argument("-p", "--shape-predictor", type=str, default="./data/shape_predictor_68_face_landmarks.dat",
                 help="path to facial landmark predictor")
-ap.add_argument("-a", "--alarm", type=str, default="./../data/alarm.wav",
+ap.add_argument("-a", "--alarm", type=str, default="./data/alarm.wav",
                 help="path alarm .WAV file")
 ap.add_argument("-w", "--webcam", type=int, default=0,
                 help="index of webcam on system")
