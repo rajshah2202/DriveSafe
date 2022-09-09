@@ -67,21 +67,24 @@ while True:
 
     empty_rect = dlib.rectangles()
     if rects == empty_rect:
-        if not ALARM_ON:
-            ALARM_ON = True
-            # check to see if an alarm file was supplied,
-            # and if so, start a thread to have the alarm
-            # sound played in the background
-            if args["alarm"] != "":
-                t = Thread(target=sound_alarm,
-                           args=(args["alarm"],))
-                t.deamon = True
-                t.start()
+        ATTENTION_COUNTER += 1
+        if ATTENTION_COUNTER >= 24:
+            if not ALARM_ON:
+                ALARM_ON = True
+                # check to see if an alarm file was supplied,
+                # and if so, start a thread to have the alarm
+                # sound played in the background
+                if args["alarm"] != "":
+                    t = Thread(target=sound_alarm,
+                            args=(args["alarm"],))
+                    t.deamon = True
+                    t.start()
 
-        # draw an alarm on the frame
-        cv2.putText(frame, "PAY ATTENTION!", (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            # draw an alarm on the frame
+            cv2.putText(frame, "PAY ATTENTION!", (10, 30),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
     else:
+        ATTENTION_COUNTER = 0
         ALARM_ON = False
 
     # loop over the face detections
