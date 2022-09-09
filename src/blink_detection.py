@@ -5,8 +5,8 @@ from imutils import face_utils
 # blink and then a second constant for the number of consecutive
 # frames the eye must be below the threshold for to set off the
 # alarm
-EYE_AR_THRESH = 0.3
-EYE_AR_CONSEC_FRAMES = 48
+EYE_AR_THRESH = 0.25
+EYE_AR_CONSEC_FRAMES = 24
 
 
 def eye_aspect_ratio(eye):
@@ -23,7 +23,7 @@ def eye_aspect_ratio(eye):
     return ear
 
 
-def detect_blink(predictor, rect, gray, frame, lStart, lEnd, rStart, rEnd, BLINK_COUNTER):
+def detect_blink(predictor, rect, gray, lStart, lEnd, rStart, rEnd, BLINK_COUNTER):
     # determine the facial landmarks for the face region, then
     # convert the facial landmark (x, y)-coordinates to a NumPy
     # array
