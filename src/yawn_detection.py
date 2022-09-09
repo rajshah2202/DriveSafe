@@ -35,9 +35,6 @@ def detect_yawn(predictor, rect, gray, mStart, mEnd, YAWN_COUNTER):
     mouth = shape[mStart:mEnd]
     mar = mouth_aspect_ratio(mouth)
 
-    # TEST
-    print(mar)
-
     # check to see if the mouth aspect ratio is over the yawn
     # threshold, and if so, increment the yawn frame counter
     if mar > MOUTH_AR_THRESH:
