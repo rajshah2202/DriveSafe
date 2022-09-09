@@ -6,7 +6,7 @@ from imutils import face_utils
 # frames the eye must be below the threshold for to set off the
 # alarm
 EYE_AR_THRESH = 0.3
-EYE_AR_CONSEC_FRAMES = 48
+EYE_AR_CONSEC_FRAMES = 24
 
 
 def eye_aspect_ratio(eye):
