@@ -8,6 +8,7 @@ from imutils import face_utils
 EYE_AR_THRESH = 0.3
 EYE_AR_CONSEC_FRAMES = 48
 
+
 def eye_aspect_ratio(eye):
     # compute the euclidean distances between the two sets of
     # vertical eye landmarks (x, y)-coordinates
@@ -42,9 +43,10 @@ def detect_blink(predictor, rect, gray, frame, lStart, lEnd, rStart, rEnd, BLINK
     if ear < EYE_AR_THRESH:
         BLINK_COUNTER += 1
         if BLINK_COUNTER >= EYE_AR_CONSEC_FRAMES:
-            return True, leftEye, rightEye
+            return True, leftEye, rightEye, BLINK_COUNTER
+        return False, leftEye, rightEye, BLINK_COUNTER
     # otherwise, the eye aspect ratio is not below the blink
     # threshold, so reset the counter and alarm
     else:
         BLINK_COUNTER = 0
-        return False, leftEye, rightEye
+        return False, leftEye, rightEye, BLINK_COUNTER

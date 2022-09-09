@@ -10,7 +10,8 @@ import time
 import dlib
 import cv2
 
-from .blink_detection import detect_blink
+from blink_detection import detect_blink
+
 
 def sound_alarm(path):
     # play an alarm sound
@@ -59,7 +60,9 @@ while True:
     rects = detector(gray, 0)
     # loop over the face detections
     for rect in rects:
-        blink, leftEye, rightEye = detect_blink(predictor, rect, gray, frame, lStart, lEnd, rStart, rEnd, BLINK_COUNTER)
+        blink, leftEye, rightEye, BLINK_COUNTER = detect_blink(
+            predictor, rect, gray, frame, lStart, lEnd, rStart, rEnd, BLINK_COUNTER)
+        print(blink)
         # compute the convex hull for the left and right eye, then
         # visualize each of the eyes
         leftEyeHull = cv2.convexHull(leftEye)
@@ -74,7 +77,7 @@ while True:
                 # sound played in the background
                 if args["alarm"] != "":
                     t = Thread(target=sound_alarm,
-                                args=(args["alarm"],))
+                               args=(args["alarm"],))
                     t.deamon = True
                     t.start()
             # draw an alarm on the frame
@@ -82,7 +85,6 @@ while True:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         else:
             ALARM_ON = False
-
 
         # draw the computed eye aspect ratio on the frame to help
         # with debugging and setting the correct eye aspect ratio
